@@ -1,0 +1,13 @@
+# all Epics that are not listed here are considered to be Business Features.
+
+[maintenance]
+TH-3402
+TH-2619
+TH-2641
+TH-3322
+TH-3370
+
+[technical improvement]
+TH-3026
+TH-3444
+TH-3504
