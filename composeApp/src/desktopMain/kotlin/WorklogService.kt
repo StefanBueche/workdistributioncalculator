@@ -23,7 +23,7 @@ class WorklogService(private val jiraRepository: JiraRepository, private val epi
     ): Int {
         val epics = epicsByCategory[epicCategory]
         val ticketsInCategory = ticketsInSprint.filter { epics?.contains(it.fields.epicLink) ?: false }
-        return ticketsInCategory.sumOf { it.fields.aggregatetimespent ?: 0 } / 3600
+        return ticketsInCategory.sumOf { it.fields.aggregatetimespent ?: 0 }.inHours()
     }
 
     private fun sumBusinessTickets(
@@ -32,6 +32,10 @@ class WorklogService(private val jiraRepository: JiraRepository, private val epi
     ) = ticketsInSprint
         .filter { !(epicsByCategory[EpicCategory.MAINTENANCE]?.contains(it.fields.epicLink) ?: false) }
         .filter { !(epicsByCategory[EpicCategory.TECHNICAL_IMPROVEMENT]?.contains(it.fields.epicLink) ?: false) }
-        .sumOf { it.fields.aggregatetimespent ?: 0 } / 3600
+        .sumOf { it.fields.aggregatetimespent ?: 0 }.inHours()
 
+}
+
+fun Int.inHours(): Int {
+    return this / 3600
 }
