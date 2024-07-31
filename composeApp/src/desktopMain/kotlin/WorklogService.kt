@@ -36,6 +36,6 @@ class WorklogService(private val jiraRepository: JiraRepository, private val epi
 
 }
 
-fun Int.inHours(): Int {
+private fun Int.inHours(): Int {
     return this / 3600
 }
