@@ -30,6 +30,7 @@ kotlin {
             implementation(libs.ktor.content.negotiation)
             implementation(libs.ktor.json)
             implementation(libs.slf4j.simple)
+            implementation(libs.androidx.lifecycle)
         }
         desktopTest.dependencies {
             implementation(libs.kotlin.test)

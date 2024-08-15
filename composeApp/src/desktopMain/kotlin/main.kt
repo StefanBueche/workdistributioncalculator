@@ -6,6 +6,6 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "Work Distribution Calculator",
     ) {
-        App()
+        App(appViewModel = AppViewModel())
     }
 }
