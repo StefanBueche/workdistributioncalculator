@@ -1,5 +1,5 @@
 import org.junit.Assert.assertEquals
-import org.junit.Test
+import kotlin.test.Test
 
 class EpicRepositoryTest {
 
@@ -36,6 +36,5 @@ class EpicRepositoryTest {
         val result = sut.readSectionedProperties(filename)
 
         assertEquals(expected, result)
-
     }
 }
