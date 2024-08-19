@@ -9,7 +9,9 @@ class AppViewModel : ViewModel() {
     var errorMessage = mutableStateOf("")
     val openErrorDialog = mutableStateOf(false)
 
-    private val worklogService = WorklogService(JiraRepository(), EpicRepository())
+    private val jiraUrl = "https://jira.gls-group.eu/rest/api/2/search"
+
+    private val worklogService = WorklogService(JiraRepository(jiraUrl), EpicRepository())
 
     fun calculateButtonClicked() {
         try {

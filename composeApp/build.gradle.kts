@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
-    kotlin("plugin.serialization").version("2.0.0")
+    alias(libs.plugins.serialization)
 }
 
 kotlin {
@@ -35,6 +35,7 @@ kotlin {
         desktopTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.mockk)
+            implementation(libs.mockwebserver)
         }
     }
 }
