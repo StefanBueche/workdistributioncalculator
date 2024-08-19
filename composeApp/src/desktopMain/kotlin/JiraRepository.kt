@@ -7,7 +7,7 @@ import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
-class JiraRepository(private val jiraUrl: String) {
+class JiraRepository(val jiraUrl: String) {
 
     suspend fun getTicketsForSprint(sprint: String, jiraUsername: String, jiraPassword: String): List<Issue> {
         val query = "project = TH AND issueType in (Story, Task, Bug) AND Sprint = $sprint AND status = Done"
