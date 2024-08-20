@@ -1,23 +1,26 @@
+import io.mockk.coEvery
 import io.mockk.every
-import io.mockk.junit4.MockKRule
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
-import org.junit.Rule
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class WorklogServiceTest {
 
-    @get:Rule
-    val mockkRule = MockKRule(this)
+    private lateinit var jiraRepository: JiraRepository
+    private lateinit var epicRepository: EpicRepository
+    private lateinit var sut: WorklogService
 
-    private val jiraRepository = mockk<JiraRepository>()
-    private val epicRepository = mockk<EpicRepository>()
-    private val sut = WorklogService(jiraRepository, epicRepository)
+    @BeforeTest
+    fun setup() {
+        jiraRepository = mockk()
+        epicRepository = mockk()
+        sut = WorklogService(jiraRepository, epicRepository)
+    }
 
     @Test
     fun `only maintenance tickets in Sprint sums only those`() {
-        every { runBlocking { jiraRepository.getTicketsForSprint(any(), any(), any()) }} returns maintenanceTickets()
+        coEvery { jiraRepository.getTicketsForSprint(any(), any(), any()) } returns maintenanceTickets()
         every { epicRepository.readSectionedProperties(any()) } returns epicList()
 
         val result = sut.calculateTimeDistribution("", "", "")
@@ -28,7 +31,7 @@ class WorklogServiceTest {
 
     @Test
     fun `maintenance and technical tickets in Sprint sums only those`() {
-        every { runBlocking { jiraRepository.getTicketsForSprint(any(), any(), any()) }} returns maintenanceAndTechnicalTickets()
+        coEvery { jiraRepository.getTicketsForSprint(any(), any(), any()) } returns maintenanceAndTechnicalTickets()
         every { epicRepository.readSectionedProperties(any()) } returns epicList()
 
         val result = sut.calculateTimeDistribution("", "", "")
@@ -39,7 +42,7 @@ class WorklogServiceTest {
 
     @Test
     fun `mixed tickets in Sprint sums all`() {
-        every { runBlocking { jiraRepository.getTicketsForSprint(any(), any(), any()) }} returns mixedTickets()
+        coEvery { jiraRepository.getTicketsForSprint(any(), any(), any()) } returns mixedTickets()
         every { epicRepository.readSectionedProperties(any()) } returns epicList()
 
         val result = sut.calculateTimeDistribution("", "", "")
