@@ -51,6 +51,19 @@ class WorklogServiceTest {
         assertEquals(6, result[EpicCategory.BUSINESS])
     }
 
+    @Test
+    fun `Hey Joe tickets are summed separately`() {
+        coEvery { jiraRepository.getTicketsForSprint(any(), any(), any()) } returns mixedTicketsWithHeyJoe()
+        every { epicRepository.readSectionedProperties(any()) } returns epicList()
+
+        val result = sut.calculateTimeDistribution("", "", "")
+        assertEquals(3, result[EpicCategory.MAINTENANCE])
+        assertEquals(4, result[EpicCategory.TECHNICAL_IMPROVEMENT])
+        assertEquals(6, result[EpicCategory.BUSINESS])
+        assertEquals(2, result[EpicCategory.HEY_JOES])
+
+    }
+
     private fun epicList(): Map<EpicCategory, List<String>> {
         val epics = HashMap<EpicCategory, List<String>>()
         epics[EpicCategory.MAINTENANCE] = listOf("TH-1000", "TH-1001")
@@ -82,6 +95,21 @@ class WorklogServiceTest {
         ticketList.add(Issue("TH-22", Fields("22", "TH-3002", 7200, Status("Done"))))
         ticketList.add(Issue("TH-1", Fields("1", "TH-1000", 3600, Status("Done"))))
         ticketList.add(Issue("TH-2", Fields("2", "TH-1001", 7200, Status("Done"))))
+        ticketList.add(Issue("TH-23", Fields("23", "TH-3002", 7200, Status("Done"))))
+        ticketList.add(Issue("TH-10", Fields("10", "TH-2000", 3600, Status("Done"))))
+        ticketList.add(Issue("TH-11", Fields("11", "TH-2000", 3600, Status("Done"))))
+        ticketList.add(Issue("TH-12", Fields("12", "TH-2002", 7200, Status("Done"))))
+        return ticketList
+    }
+
+    private fun mixedTicketsWithHeyJoe(): List<Issue> {
+        val ticketList = ArrayList<Issue>()
+        ticketList.add(Issue("TH-20", Fields("20", "TH-3000", 3600, Status("Done"))))
+        ticketList.add(Issue("TH-21", Fields("21", "TH-3001", 3600, Status("Done"))))
+        ticketList.add(Issue("TH-22", Fields("22", "TH-3002", 7200, Status("Done"))))
+        ticketList.add(Issue("TH-1", Fields("1", "TH-1000", 3600, Status("Done"))))
+        ticketList.add(Issue("TH-2", Fields("2", "TH-1001", 7200, Status("Done"))))
+        ticketList.add(Issue("TH-3", Fields("Hey Joes", "TH-1001", 7200, Status("Done"))))
         ticketList.add(Issue("TH-23", Fields("23", "TH-3002", 7200, Status("Done"))))
         ticketList.add(Issue("TH-10", Fields("10", "TH-2000", 3600, Status("Done"))))
         ticketList.add(Issue("TH-11", Fields("11", "TH-2000", 3600, Status("Done"))))

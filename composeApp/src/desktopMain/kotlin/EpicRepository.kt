@@ -37,7 +37,8 @@ class EpicRepository {
 enum class EpicCategory(val sectionName: String) {
     MAINTENANCE("maintenance"),
     TECHNICAL_IMPROVEMENT("technical improvement"),
-    BUSINESS("business");
+    BUSINESS("business"),
+    HEY_JOES("hey joes");
 
     companion object {
         fun getCategoryBySectionName(sectionName: String): EpicCategory {
