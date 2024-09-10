@@ -5,11 +5,8 @@ class EpicRepositoryTest {
 
     @Test
     fun `file with only maintenance section creates only this EpicCategory`() {
-        val epicList = ArrayList<String>()
-        epicList.add("TH-1111")
-        epicList.add("TH-2222")
         val expected = HashMap<EpicCategory, List<String>>()
-        expected[EpicCategory.MAINTENANCE] = epicList
+        expected[EpicCategory.MAINTENANCE] = listOf("TH-1111", "TH-2222")
 
         val filename = "epics-only-maintenance.list"
         val sut = EpicRepository()
@@ -20,16 +17,9 @@ class EpicRepositoryTest {
 
     @Test
     fun `file with maintenance and improvement sections returns both EpicCategories`() {
-        var epicList = ArrayList<String>()
-        epicList.add("TH-1111")
-        epicList.add("TH-2222")
         val expected = HashMap<EpicCategory, List<String>>()
-        expected[EpicCategory.MAINTENANCE] = epicList
-        epicList = ArrayList()
-        epicList.add("TH-9997")
-        epicList.add("TH-9998")
-        epicList.add("TH-9999")
-        expected[EpicCategory.TECHNICAL_IMPROVEMENT] = epicList
+        expected[EpicCategory.MAINTENANCE] = listOf("TH-1111", "TH-2222")
+        expected[EpicCategory.TECHNICAL_IMPROVEMENT] = listOf("TH-9997", "TH-9998", "TH-9999")
 
         val filename = "epics-maintenance-improvement.list"
         val sut = EpicRepository()
