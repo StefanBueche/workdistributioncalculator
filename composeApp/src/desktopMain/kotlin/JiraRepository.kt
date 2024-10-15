@@ -39,7 +39,6 @@ class JiraRepository(val jiraUrl: String) {
             }
         }.body()
 
-        client.close()
         return jiraTickets.issues
     }
 }
