@@ -10,23 +10,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-private val worklogService = WorklogService(JiraRepository(), EpicRepository())
-
 @Composable
 @Preview
-fun App() {
+fun App(appViewModel: AppViewModel) {
     MaterialTheme {
-        var sprintName by remember { mutableStateOf("") }
+        val viewModel = remember { appViewModel }
         val sprintNameFocusRequester = remember { FocusRequester() }
-        var jiraUsername by remember { mutableStateOf("") }
         val jiraUsernameFocusRequester = remember { FocusRequester() }
-        var jiraPassword by remember { mutableStateOf("") }
         val jiraPasswordFocusRequester = remember { FocusRequester() }
-        var workDistribution by remember { mutableStateOf("") }
-        var errorMessage by remember { mutableStateOf("") }
-        val openErrorDialog = remember { mutableStateOf(false) }
-        if (openErrorDialog.value) {
-            ErrorDialog(shouldShowDialog = openErrorDialog, message = errorMessage)
+        if (viewModel.openErrorDialog.value) {
+            ErrorDialog(shouldShowDialog = viewModel.openErrorDialog, message = viewModel.errorMessage.value)
         }
         LaunchedEffect(Unit) {
             sprintNameFocusRequester.requestFocus()
@@ -35,37 +28,31 @@ fun App() {
         Column(modifier = Modifier.offset(4.dp)) {
             Text("Enter the name of the Sprint as it is displayed in Jira (e.g. '82.2').")
             OutlinedTextField(
-                value = sprintName,
-                onValueChange = { sprintName = it },
+                value = viewModel.sprintName.value,
+                onValueChange = { sprintName -> viewModel.sprintName.value = sprintName },
                 label = { Text("Sprint name") },
                 modifier = focusSwitcher(sprintNameFocusRequester, jiraUsernameFocusRequester)
             )
             OutlinedTextField(
-                value = jiraUsername,
-                onValueChange = { jiraUsername = it },
+                value = viewModel.jiraUsername.value,
+                onValueChange = { jiraUsername -> viewModel.jiraUsername.value = jiraUsername },
                 label = { Text("Username for Jira") },
                 modifier = focusSwitcher(jiraUsernameFocusRequester, jiraPasswordFocusRequester)
             )
             OutlinedTextField(
-                value = jiraPassword,
-                onValueChange = { jiraPassword = it },
+                value = viewModel.jiraPassword.value,
+                onValueChange = { jiraPassword -> viewModel.jiraPassword.value = jiraPassword },
                 label = { Text("Password for Jira") },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = focusSwitcher(jiraPasswordFocusRequester, sprintNameFocusRequester)
             )
             Button(onClick = {
-                try {
-                    workDistribution = worklogService
-                        .calculateTimeDistribution(sprintName, jiraUsername, jiraPassword).toString()
-                } catch (e: Exception) {
-                    errorMessage = e.message ?: "Something went wrong."
-                    openErrorDialog.value = true
-                }
+                viewModel.calculateButtonClicked()
             }) {
                 Text("calculate logged work for Sprint")
             }
             OutlinedTextField(
-                value = workDistribution,
+                value = viewModel.workDistribution.value,
                 onValueChange = {},
                 label = { Text("distribution of work") },
                 enabled = false
@@ -94,14 +81,8 @@ fun ErrorDialog(shouldShowDialog: MutableState<Boolean>, message: String) {
             title = { Text(text = "Something went wrong") },
             text = { Text(text = "There was an error while loading data:\n$message") },
             confirmButton = {
-                Button(
-                    onClick = {
-                        shouldShowDialog.value = false
-                    }
-                ) {
-                    Text(
-                        text = "Well well"
-                    )
+                Button(onClick = { shouldShowDialog.value = false }) {
+                    Text(text = "Well well")
                 }
             }
         )

@@ -1,23 +1,26 @@
+import io.mockk.coEvery
 import io.mockk.every
-import io.mockk.junit4.MockKRule
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
-import org.junit.Rule
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class WorklogServiceTest {
 
-    @get:Rule
-    val mockkRule = MockKRule(this)
+    private lateinit var jiraRepository: JiraRepository
+    private lateinit var epicRepository: EpicRepository
+    private lateinit var sut: WorklogService
 
-    private val jiraRepository = mockk<JiraRepository>()
-    private val epicRepository = mockk<EpicRepository>()
-    private val sut = WorklogService(jiraRepository, epicRepository)
+    @BeforeTest
+    fun setup() {
+        jiraRepository = mockk()
+        epicRepository = mockk()
+        sut = WorklogService(jiraRepository, epicRepository)
+    }
 
     @Test
     fun `only maintenance tickets in Sprint sums only those`() {
-        every { runBlocking { jiraRepository.getTicketsForSprint(any(), any(), any()) }} returns maintenanceTickets()
+        coEvery { jiraRepository.getTicketsForSprint(any(), any(), any()) } returns maintenanceTickets()
         every { epicRepository.readSectionedProperties(any()) } returns epicList()
 
         val result = sut.calculateTimeDistribution("", "", "")
@@ -28,7 +31,7 @@ class WorklogServiceTest {
 
     @Test
     fun `maintenance and technical tickets in Sprint sums only those`() {
-        every { runBlocking { jiraRepository.getTicketsForSprint(any(), any(), any()) }} returns maintenanceAndTechnicalTickets()
+        coEvery { jiraRepository.getTicketsForSprint(any(), any(), any()) } returns maintenanceAndTechnicalTickets()
         every { epicRepository.readSectionedProperties(any()) } returns epicList()
 
         val result = sut.calculateTimeDistribution("", "", "")
@@ -39,13 +42,26 @@ class WorklogServiceTest {
 
     @Test
     fun `mixed tickets in Sprint sums all`() {
-        every { runBlocking { jiraRepository.getTicketsForSprint(any(), any(), any()) }} returns mixedTickets()
+        coEvery { jiraRepository.getTicketsForSprint(any(), any(), any()) } returns mixedTickets()
         every { epicRepository.readSectionedProperties(any()) } returns epicList()
 
         val result = sut.calculateTimeDistribution("", "", "")
         assertEquals(3, result[EpicCategory.MAINTENANCE])
         assertEquals(4, result[EpicCategory.TECHNICAL_IMPROVEMENT])
         assertEquals(6, result[EpicCategory.BUSINESS])
+    }
+
+    @Test
+    fun `Hey Joe tickets are summed separately`() {
+        coEvery { jiraRepository.getTicketsForSprint(any(), any(), any()) } returns mixedTicketsWithHeyJoe()
+        every { epicRepository.readSectionedProperties(any()) } returns epicList()
+
+        val result = sut.calculateTimeDistribution("", "", "")
+        assertEquals(3, result[EpicCategory.MAINTENANCE])
+        assertEquals(4, result[EpicCategory.TECHNICAL_IMPROVEMENT])
+        assertEquals(6, result[EpicCategory.BUSINESS])
+        assertEquals(2, result[EpicCategory.HEY_JOES])
+
     }
 
     private fun epicList(): Map<EpicCategory, List<String>> {
@@ -79,6 +95,21 @@ class WorklogServiceTest {
         ticketList.add(Issue("TH-22", Fields("22", "TH-3002", 7200, Status("Done"))))
         ticketList.add(Issue("TH-1", Fields("1", "TH-1000", 3600, Status("Done"))))
         ticketList.add(Issue("TH-2", Fields("2", "TH-1001", 7200, Status("Done"))))
+        ticketList.add(Issue("TH-23", Fields("23", "TH-3002", 7200, Status("Done"))))
+        ticketList.add(Issue("TH-10", Fields("10", "TH-2000", 3600, Status("Done"))))
+        ticketList.add(Issue("TH-11", Fields("11", "TH-2000", 3600, Status("Done"))))
+        ticketList.add(Issue("TH-12", Fields("12", "TH-2002", 7200, Status("Done"))))
+        return ticketList
+    }
+
+    private fun mixedTicketsWithHeyJoe(): List<Issue> {
+        val ticketList = ArrayList<Issue>()
+        ticketList.add(Issue("TH-20", Fields("20", "TH-3000", 3600, Status("Done"))))
+        ticketList.add(Issue("TH-21", Fields("21", "TH-3001", 3600, Status("Done"))))
+        ticketList.add(Issue("TH-22", Fields("22", "TH-3002", 7200, Status("Done"))))
+        ticketList.add(Issue("TH-1", Fields("1", "TH-1000", 3600, Status("Done"))))
+        ticketList.add(Issue("TH-2", Fields("2", "TH-1001", 7200, Status("Done"))))
+        ticketList.add(Issue("TH-3", Fields("Hey Joes", "TH-1001", 7200, Status("Done"))))
         ticketList.add(Issue("TH-23", Fields("23", "TH-3002", 7200, Status("Done"))))
         ticketList.add(Issue("TH-10", Fields("10", "TH-2000", 3600, Status("Done"))))
         ticketList.add(Issue("TH-11", Fields("11", "TH-2000", 3600, Status("Done"))))
