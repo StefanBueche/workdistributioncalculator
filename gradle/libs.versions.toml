@@ -3,7 +3,7 @@ compose-plugin = "1.8.1"
 kotlin = "2.1.21"
 ktor = "3.2.0"
 slf4j = "2.0.17"
-mockk = "1.14.2"
+mockk = "1.14.4"
 lifecycle = "2.8.2"
 mockwebserver = "4.12.0"
 
