@@ -5,7 +5,7 @@ ktor = "3.2.1"
 slf4j = "2.0.17"
 mockk = "1.14.4"
 lifecycle = "2.8.2"
-mockwebserver = "5.0.0"
+mockwebserver = "5.1.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
