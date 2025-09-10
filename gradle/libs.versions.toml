@@ -1,6 +1,6 @@
 [versions]
 compose-plugin = "1.8.2"
-kotlin = "2.2.0"
+kotlin = "2.2.10"
 ktor = "3.2.3"
 slf4j = "2.0.17"
 mockk = "1.14.5"
