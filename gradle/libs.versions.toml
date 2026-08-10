@@ -1,7 +1,7 @@
 [versions]
 compose-plugin = "1.11.1"
 kotlin = "2.4.10"
-ktor = "3.5.1"
+ktor = "3.5.2"
 slf4j = "2.0.18"
 mockk = "1.14.11"
 lifecycle = "2.8.2"
