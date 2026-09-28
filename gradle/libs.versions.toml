@@ -1,5 +1,5 @@
 [versions]
-compose-plugin = "1.12.0"
+compose-plugin = "1.12.1"
 kotlin = "2.4.20"
 ktor = "3.6.0"
 slf4j = "2.0.19"
